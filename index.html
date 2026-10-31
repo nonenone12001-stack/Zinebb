@@ -1,0 +1,411 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grow a Birthday Garden 🌱 For Zineb</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      text-align: center;
+      background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+      min-height: 100vh;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      overflow-x: hidden;
+    }
+    .card {
+      background: rgba(255, 255, 255, 0.85);
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      backdrop-filter: blur(10px);
+      max-width: 400px;
+      width: 90%;
+      transition: transform 0.3s ease;
+      position: relative;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+    }
+    h1 {
+      margin-top: 0;
+      color: #2c3e50;
+      font-size: 24px;
+      margin-bottom: 5px;
+    }
+    .friend-name {
+      color: #e91e63;
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 15px;
+      display: block;
+    }
+    p {
+      color: #7f8c8d;
+      margin-bottom: 20px;
+    }
+    #game-stage {
+      height: 150px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 20px 0;
+    }
+    #plant {
+      font-size: 80px;
+      transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      user-select: none;
+    }
+    .pulse {
+      animation: pulseAnim 0.5s alternate infinite;
+    }
+    @keyframes pulseAnim {
+      from { transform: scale(1); }
+      to { transform: scale(1.05); }
+    }
+    #status {
+      font-weight: bold;
+      color: #27ae60;
+      margin: 15px 0;
+      min-height: 20px;
+    }
+    button {
+      padding: 12px 28px;
+      font-size: 18px;
+      border: none;
+      border-radius: 50px;
+      background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%);
+      color: white;
+      cursor: pointer;
+      box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+      transition: all 0.3s ease;
+      font-weight: bold;
+    }
+    button:hover {
+      background: linear-gradient(135deg, #66bb6a 0%, #388e3c 100%);
+      box-shadow: 0 7px 20px rgba(76, 175, 80, 0.6);
+      transform: scale(1.05);
+    }
+    button:active {
+      transform: scale(0.98);
+    }
+    button:disabled {
+      background: #bdc3c7;
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+    .confetti {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background-color: #f2d74e;
+      animation: confettiFall 3s linear infinite;
+      top: -10px;
+      z-index: 999;
+    }
+    @keyframes confettiFall {
+      0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+    }
+    #envelope-container {
+      display: none;
+      margin-top: 20px;
+      animation: fadeInUp 1s ease forwards;
+    }
+    .envelope-btn {
+      background: linear-gradient(135deg, #ff4081 0%, #ec407a 100%);
+      box-shadow: 0 5px 15px rgba(236, 64, 122, 0.4);
+      font-size: 16px;
+      padding: 10px 22px;
+    }
+    .envelope-btn:hover {
+      background: linear-gradient(135deg, #ff6097 0%, #f06292 100%);
+      box-shadow: 0 7px 20px rgba(236, 64, 122, 0.6);
+    }
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(5px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.4s ease;
+    }
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+    .letter-popup {
+      background: #fffdf9;
+      background-image: radial-gradient(#f1eedb 15%, transparent 16%), radial-gradient(#f1eedb 15%, transparent 16%);
+      background-size: 20px 20px;
+      background-position: 0 0, 10px 10px;
+      padding: 30px;
+      border-radius: 15px;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+      transform: scale(0.7);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      border-left: 8px solid #ff4081;
+      text-align: left;
+    }
+    .modal-overlay.active .letter-popup {
+      transform: scale(1);
+    }
+    .letter-header {
+      font-size: 13px;
+      color: #95a5a6;
+      border-bottom: 1px dashed #bdc3c7;
+      padding-bottom: 8px;
+      margin-bottom: 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .letter-header-row {
+      display: flex;
+      justify-content: space-between;
+    }
+    .letter-body {
+      font-size: 16px;
+      line-height: 1.6;
+      color: #34495e;
+      margin-bottom: 25px;
+      white-space: pre-line;
+    }
+    .letter-footer {
+      text-align: center;
+    }
+    .wish-btn {
+      background: linear-gradient(135deg, #9c27b0 0%, #673ab7 100%);
+      box-shadow: 0 5px 15px rgba(103, 58, 183, 0.4);
+      width: 100%;
+    }
+    .wish-btn:hover {
+      background: linear-gradient(135deg, #ba68c8 0%, #7e57c2 100%);
+    }
+    #wish-form-container {
+      display: none;
+      margin-top: 15px;
+      animation: fadeIn 0.5s ease forwards;
+    }
+    textarea {
+      width: 100%;
+      height: 80px;
+      padding: 10px;
+      border-radius: 8px;
+      border: 2px solid #e0e0e0;
+      font-family: inherit;
+      resize: none;
+      margin-bottom: 10px;
+      font-size: 15px;
+    }
+    textarea:focus {
+      border-color: #673ab7;
+      outline: none;
+    }
+    .send-wish-btn {
+      background: linear-gradient(135deg, #009688 0%, #00796b 100%);
+      font-size: 15px;
+      padding: 8px 20px;
+      width: 100%;
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1 id="title">Grow a Birthday Garden 🌱</h1>
+    <span class="friend-name">for Zineb ฅ⁠^⁠•⁠ﻌ⁠•⁠^⁠ฅ</span>
+    <p id="desc">Water the seed to grow a special surprise!</p>
+    
+    <div id="game-stage">
+      <div id="plant">🫘</div>
+    </div>
+    <div id="status">Stage 1: The Seed</div>
+    <button id="action-btn" onclick="growPlant()">Water Plant 💧</button>
+    <div id="envelope-container">
+      <button class="envelope-btn" onclick="openLetter()">You have a message! ✉️</button>
+    </div>
+  </div>
+  <div class="modal-overlay" id="letterModal">
+    <div class="letter-popup">
+      <div class="letter-header">
+        <div class="letter-header-row">
+          <span>From: Ilyass</span>
+          <span>To: Zineb</span>
+        </div>
+        <div class="letter-header-row">
+          <span>Date: 30 October 📅</span>
+        </div>
+      </div>
+      <div class="letter-body" id="letterText">Happy Birthday, Zineb! 🌸
+Wishing you a wonderful day filled with joy, peace, and happiness. Thank you for your kindness and for being such a wonderful friend. May this coming year bring you great success, good health, and everything you hope for. Have a truly special day! ✨</div>
+      <div class="letter-footer">
+        <button class="wish-btn" id="wishBtn" onclick="showWishForm()">Make a wish ✨</button>
+        
+        <div id="wish-form-container">
+          <textarea id="wishInput" placeholder="Write your birthday wish here..."></textarea>
+          <button class="send-wish-btn" onclick="sendWish()">Send Wish to Ilyass 🚀</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    let stage = 1;
+    let wishSent = false;
+    const plantElement = document.getElementById('plant');
+    const statusElement = document.getElementById('status');
+    const btnElement = document.getElementById('action-btn');
+    const titleElement = document.getElementById('title');
+    const descElement = document.getElementById('desc');
+    const envelopeContainer = document.getElementById('envelope-container');
+    const letterModal = document.getElementById('letterModal');
+    const wishFormContainer = document.getElementById('wish-form-container');
+    const wishBtn = document.getElementById('wishBtn');
+    const stages = {
+      1: { emoji: '🫘', text: 'Stage 1: Just a tiny seed in the ground.' },
+      2: { emoji: '🌱', text: 'Stage 2: Look! A small sprout appeared!' },
+      3: { emoji: '🌿', text: 'Stage 3: Growing stronger and leaves are spreading.' },
+      4: { emoji: '🪴', text: 'Stage 4: A healthy plant ready to bloom!' },
+      5: { emoji: '🌸✨🌻', text: 'Happy Birthday! Your garden has fully bloomed! 🎉' },
+      6: { emoji: '🌳🍎✨', text: 'Stage 6: Your wish made the garden grow into a Tree of Desires!' },
+      7: { emoji: '🎁✨', text: 'Final Stage: The tree has dropped a final gift for you!' }
+    };
+    function growPlant() {
+      if (stage < 5) {
+        stage++;
+        updateStage();
+        if (stage === 5) {
+          triggerEndGame();
+        }
+      } else if (stage === 5 && wishSent) {
+        stage = 6;
+        updateStage();
+        btnElement.innerText = "Harvest Tree 🍎";
+        descElement.innerText = "Something is falling from the tree...";
+      } else if (stage === 6) {
+        stage = 7;
+        updateStage();
+        btnElement.innerText = "Open Gift 🎁";
+        btnElement.style.background = "linear-gradient(135deg, #ffc107 0%, #ff9800 100%)";
+        descElement.innerText = "Click to unwrap your final surprise!";
+      } else if (stage === 7) {
+        showCustomAlert("❤️ Thank you for playing, Zineb! Have the best day ever! ❤️");
+        for (let i = 0; i < 50; i++) { createConfetti(); }
+      }
+    }
+    function updateStage() {
+      plantElement.style.transform = 'scale(0.5)';
+      setTimeout(() => {
+        plantElement.innerHTML = stages[stage].emoji;
+        statusElement.innerText = stages[stage].text;
+        plantElement.style.transform = 'scale(1)';
+      }, 200);
+    }
+    function triggerEndGame() {
+      btnElement.innerText = "Check your message! ✉️";
+      btnElement.disabled = true;
+      titleElement.innerText = "Surprise! 🎂🎉";
+      descElement.innerText = "Open your envelope below to unlock the next step!";
+      plantElement.classList.add('pulse');
+      
+      for (let i = 0; i < 100; i++) {
+        createConfetti();
+      }
+      setTimeout(() => {
+        envelopeContainer.style.display = 'block';
+      }, 1000);
+    }
+    function createConfetti() {
+      const colors = ['#f2d74e', '#95c3de', '#e94a3f', '#e97305', '#f3a4b5', '#4caf50'];
+      const confetti = document.createElement('div');
+      confetti.classList.add('confetti');
+      confetti.style.left = Math.random() * 100 + 'vw';
+      confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+      confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+      confetti.style.opacity = Math.random();
+      confetti.style.width = confetti.style.height = Math.random() * 6 + 6 + 'px';
+      document.body.appendChild(confetti);
+      
+      setTimeout(() => { confetti.remove(); }, 4000);
+    }
+    function openLetter() {
+      letterModal.classList.add('active');
+    }
+    function showWishForm() {
+      wishBtn.style.display = 'none';
+      wishFormContainer.style.display = 'block';
+    }
+    function sendWish() {
+      const wish = document.getElementById('wishInput').value;
+      if (!wish.trim()) {
+        showCustomAlert("Please write a wish first! ✨");
+        return;
+      }
+      
+      copyToClipboard("My Birthday Wish: " + wish);
+      showCustomAlert("🎉 Awesome! Your wish has been copied to your clipboard automatically! You can now paste it directly in our instagram chat to send it directly to Ilyass. Now look back at the garden—it has evolved! 🚀");
+      letterModal.classList.remove('active');
+      unlockPostWishGame();
+    }
+    function copyToClipboard(text) {
+      const tempTextArea = document.createElement("textarea");
+      tempTextArea.value = text;
+      document.body.appendChild(tempTextArea);
+      tempTextArea.select();
+      document.execCommand("copy");
+      document.body.removeChild(tempTextArea);
+    }
+    function showCustomAlert(msg) {
+      const alertBox = document.createElement('div');
+      alertBox.style.position = 'fixed';
+      alertBox.style.top = '20px';
+      alertBox.style.left = '50%';
+      alertBox.style.transform = 'translateX(-50%)';
+      alertBox.style.background = '#2c3e50';
+      alertBox.style.color = '#fff';
+      alertBox.style.padding = '12px 24px';
+      alertBox.style.borderRadius = '30px';
+      alertBox.style.boxShadow = '0 5px 15px rgba(0,0,0,0.3)';
+      alertBox.style.zIndex = '2000';
+      alertBox.style.fontSize = '14px';
+      alertBox.style.maxWidth = '90%';
+      alertBox.style.textAlign = 'center';
+      alertBox.innerText = msg;
+      document.body.appendChild(alertBox);
+      setTimeout(() => { alertBox.remove(); }, 4000);
+    }
+    function unlockPostWishGame() {
+      wishSent = true;
+      envelopeContainer.style.display = 'none';
+      btnElement.disabled = false;
+      btnElement.innerText = "Water with Wish 💧✨";
+      descElement.innerText = "Your wish infused the soil with magic. Water it again!";
+    }
+  </script>
+</body>
+</html>
